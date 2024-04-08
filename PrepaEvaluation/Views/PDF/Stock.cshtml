@@ -1,0 +1,62 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Stock</title>
+    <link rel="stylesheet" href="~/lib/fontawesome-free-6.5.1-web/css/all.min.css">
+    <link rel="stylesheet" href="~/lib/bulma/css/bulma.min.css">
+    <link rel="stylesheet" href="~/lib/bulma-extensions/dist/css/bulma-extensions.min.css">
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+<div class="content">
+    <table class="table is-bordered is-striped is-fullwidth">
+            <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Désignation
+                </th>
+                <th class="has-text-centered">
+                    Unité
+                </th>
+                <th class="has-text-centered">
+                    Quantité
+                </th>
+                <th class="has-text-centered">
+                    Identification
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @for (var i = 0; i < @Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model[i].Id
+                    </td>
+                    <td>
+                        @Model[i].Designation
+                    </td>
+                    <td class="has-text-right">
+                        @Model[i].Unity
+                    </td>
+                    <td class="has-text-right">
+                        @Model[i].Quantity
+                    </td>
+                    <td class="has-text-right">
+                        @Model[i].Identification
+                    </td>
+                </tr>
+            }
+            </tbody>
+    </table>
+</div>
+</body>
+</html>

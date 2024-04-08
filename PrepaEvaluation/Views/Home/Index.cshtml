@@ -1,0 +1,356 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="box is-shadowless">
+<div class="field has-addons has-addons-centered is-hidden-desktop">
+    <div class="control has-icons-left has-icons-right">
+        <input type="text" class="input" placeholder="Rechercher...">
+        <span class="icon is-left is-ghost">
+            <i class="fas fa-magnifying-glass"></i>
+        </span>
+        <span class="icon is-right is-clickable is-ghost reset">
+            <i class="fas fa-delete-left"></i>
+        </span>
+    </div>
+</div>
+<div class="is-flex is-justify-content-space-between">
+    <h3 class="subtitle has-skeleton has-text-weight-bold">
+        Stock
+    </h3>
+    <div class="field is-grouped">
+        <form method="post" asp-controller="Home" asp-action="ImportFile" enctype="multipart/form-data">
+            <div class="field has-addons">
+                <div class="control">
+                    <div class="file">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="file"/>
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-file-import"></i>
+                                </span>
+                                <span class="file-label">
+                                    Importer
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="field">
+            <div class="control">
+                <div class="dropdown is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button">
+                            <span class="icon">
+                                <i class="fas fa-solid fa-filter"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <a class="dropdown-item">
+                                Item 1
+                            </a>
+                            <a class="dropdown-item">
+                                Item 2
+                            </a>
+                            <a class="dropdown-item">
+                                Item 3
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <div class="dropdown is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button is-ghost">
+                            <span class="icon">
+                                <i class="fas fa-ellipsis-vertical"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <a asp-controller="Home" asp-action="GeneratePdf" class="dropdown-item">
+                                Exporter en pdf
+                            </a>
+                            <a asp-controller="Home" asp-action="GenerateExcel" class="dropdown-item">
+                                Exporter en excel
+                            </a>
+                            <a asp-controller="Home" asp-action="GenerateCsv" class="dropdown-item">
+                                Exporter en CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table-container">
+    <table class="table is-fullwidth">
+        <thead>
+        <tr>
+            <th>
+                <span class="icon is-clickable add">
+                    <i class="fas fa-add"></i>
+                </span>
+            </th>
+            <th>
+                Désignation
+            </th>
+            <th class="has-text-centered">
+                Unité
+            </th>
+            <th class="has-text-centered">
+                Quantité
+            </th>
+            <th class="has-text-centered">
+                Identification
+            </th>
+            <td>
+                <div class="field is-hidden-touch">
+                    <div class="control has-icons-left has-icons-right is-pulled-right">
+                        <input type="text" class="input" name="search" data-url="/Home/Search" oninput="searchItem(this)" placeholder="Rechercher...">
+                        <span class="icon is-left is-ghost">
+                            <i class="fas fa-magnifying-glass"></i>
+                        </span>
+                        <span class="icon is-right is-clickable is-ghost reset">
+                            <i class="fas fa-delete-left"></i>
+                        </span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        @for (var i = 0; i < @Model["stocks"].Count; i++)
+        {
+            <tr>
+                <td>
+                    @Model["stocks"][i].Id
+                </td>
+                <td>
+                    @Model["stocks"][i].Designation
+                </td>
+                <td class="has-text-right">
+                    @Model["stocks"][i].Unity
+                </td>
+                <td class="has-text-right">
+                    @Model["stocks"][i].Quantity
+                </td>
+                <td class="has-text-right">
+                    @Model["stocks"][i].Identification
+                </td>
+                <td>
+                    <div class="buttons is-pulled-right">
+                        <a class="button is-dark is-background-grey has-text-white is-hidden-touch" data-url="/Home/GetById/" data-id="@Model["stocks"][i].Id" onclick="updateItem(this)">
+                            <div class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-pen"></i>
+                                </span>
+                                <span>
+                                    Modifier
+                                </span>
+                            </div>
+                        </a>
+                        <a class="button is-danger is-background-danger-40 has-text-white is-hidden-touch" data-url="/Home/Delete/" data-id="@Model["stocks"][i].Id" onclick="deleteItem(this)">
+                            <div class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </span>
+                                <span>
+                                    Supprimer
+                                </span>
+                            </div>
+                        </a>
+                        <a class="button is-dark is-background-grey has-text-white is-hidden-desktop" data-url="/Home/GetById/" data-id="@Model["stocks"][i].Id" onclick="updateItem(this)">
+                            <span class="icon">
+                                <i class="fa-solid fa-pen"></i>
+                            </span>
+                        </a>
+                        <a class="button is-danger is-background-danger-40 has-text-white is-hidden-desktop" data-url="/Home/Delete/" data-id="@Model["stocks"][i].Id" onclick="deleteItem(this)">
+                            <span class="icon">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+@if (@Model["stocks"].Count == 0)
+{
+    <h3 class="title has-text-centered">
+        Aucune donnée n'est affichée pour le moment.
+    </h3>
+}
+else
+{
+    <nav class="pagination">
+        @if (Model["stocks"].IsFirstPage)
+        {
+            <a class="pagination-previous is-disabled">
+                Précédent
+            </a>
+        }
+        @if (Model["stocks"].IsLastPage)
+        {
+            <a class="pagination-next is-disabled">
+                Suivant
+            </a>
+        }
+        @if (Model["stocks"].HasPreviousPage)
+        {
+            <a asp-controller="Home" asp-action="Index" asp-route-page="@(Model["currentPage"] - 1)" class="pagination-previous">
+                Précédent
+            </a>
+        }
+        @if (Model["stocks"].HasNextPage)
+        {
+            <a asp-controller="Home" asp-action="Index" asp-route-page="@(Model["currentPage"] + 1)" class="pagination-next">
+                Suivant
+            </a>
+        }
+        <ul class="pagination-list is-hidden-mobile">
+            @for (var i = 1; i <= @Model["totalPages"]; i++)
+            {
+                @if (i == @Model["currentPage"])
+                {
+                    <li>
+                        <a asp-controller="Home" asp-action="Index" asp-route-page="@Model["currentPage"]" class="pagination-link is-current">
+                            @Model["currentPage"]
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+
+                        @{
+                            var index = i;
+                        }
+                        <a asp-controller="Home" asp-action="Index" asp-route-page="@index" class="pagination-link">
+                            @index
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+}
+</div>
+@* Add modal *@
+<div class="modal add-modal is-clipped">
+    <div class="modal-background"></div>
+    <form method="post" asp-controller="Home" asp-action="Add" class="modal-content content box">
+        <header class="is-flex is-justify-content-space-between">
+            <h3>
+                Ajout de Stock
+            </h3>
+            <a asp-controller="Home" asp-action="Index" asp-route-page="@Model["currentPage"]" class="delete close-add-modal"></a>
+        </header>
+        <section>
+            <div class="field">
+                <label class="label">Désignation</label>
+                <div class="control">
+                    <input class="input" type="text" name="designation">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Unité</label>
+                <div class="control">
+                    <input class="input" type="text" name="unity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Quantité</label>
+                <div class="control">
+                    <input class="input" type="text" name="quantity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Identification</label>
+                <div class="control">
+                    <input class="input" type="text" name="identification">
+                </div>
+            </div>
+            <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        Ajouter
+                    </button>
+                </div>
+                <div class="control">
+                    <a asp-controller="Home" asp-action="Index" asp-route-page="@Model["currentPage"]" class="button is-light">
+                        Annuler
+                    </a>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>
+@* Update modal *@
+<div class="modal update-modal is-clipped">
+    <div class="modal-background"></div>
+    <form method="post" asp-controller="Home" asp-action="Update" class="modal-content content box">
+        <header class="is-flex is-justify-content-space-between">
+            <h3>
+                Modification de Stock
+            </h3>
+            <a asp-controller="Home" asp-action="Index" asp-route-page="@Model["currentPage"]" class="delete close-add-modal"></a>
+        </header>
+        <section>
+            <input type="hidden" name="id">
+            <div class="field">
+                <label class="label">Désignation</label>
+                <div class="control">
+                    <input class="input" type="text" name="designation">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Unité</label>
+                <div class="control">
+                    <input class="input" type="text" name="unity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Quantité</label>
+                <div class="control">
+                    <input class="input" type="text" name="quantity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Identification</label>
+                <div class="control">
+                    <input class="input" type="text" name="identification">
+                </div>
+            </div>
+            <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        Modifier
+                    </button>
+                </div>
+                <div class="control">
+                    <a asp-controller="Home" asp-action="Index" asp-route-page="@Model["currentPage"]" class="button is-light">
+                        Annuler
+                    </a>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>

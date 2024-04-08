@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - PrepaEvaluation</title>
+    <link rel="stylesheet" href="~/lib/fontawesome-free-6.5.1-web/css/all.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/lib/bulma/css/bulma.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/lib/bulma-extensions/dist/css/bulma-extensions.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/lib/bulma-list/css/bulma-list.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+</head>
+<body>
+<div class="fixed-grid has-5-cols">
+    <div class="grid is-gapless">
+        <aside class="cell is-hidden-touch">
+            <menu class="menu px-3 is-overflow-y-scroll">
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="title has-text-info-bold">
+                        Title
+                    </h3>
+                    <div class="field">
+                        <label for="switch-mode">
+                            <span class="icon is-large has-text-warning">
+                                <i class="fas fa-lg fa-sun"></i>
+                            </span>
+                        </label>
+                        <input type="checkbox" id="switch-mode" class="switch is-rounded is-outlined is-link">
+                        <label for="switch-mode">
+                            <span class="icon is-large has-text-link-25">
+                                <i class="fas fa-lg fa-moon"></i>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="menu-label">
+                    General
+                </div>
+                <ul class="menu-list">
+                    <li>
+                        <a asp-controller="Home" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+                </ul>
+            </menu>
+        </aside>
+        <main class="cell is-col-span-5-tablet is-col-span-5-mobile is-col-span-4-desktop hero is-fullheight has-background-white-bis">
+            <header class="hero-head">
+                <nav class="navbar has-shadow is-transparent">
+                    <div class="navbar-menu">
+                        <div class="navbar-end">
+                            <div class="navbar-item">
+                                <div class="list has-visible-pointer-controls">
+                                    <div class="list-item">
+                                        <div class="list-item-image">
+                                            <figure class="image">
+                                                <img class="is-rounded" src="https://via.placeholder.com/128x128.png?text=Image" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="list-item-content">
+                                            <div class="list-item-title">Name</div>
+                                            <div class="list-item-description">First Name</div>
+                                        </div>
+                                        <div class="list-item-controls">
+                                            <a href="#">
+                                                <span class="icon is-large">
+                                                    <i class="fas fs-lg fa-sign-out-alt"></i>
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <section class="hero-body">
+                <div class="container">
+                    @RenderBody()
+                    @if (ViewData["Error"] != null)
+                    {
+                        <div class="notification is-danger">
+                            <button class="delete"></button>
+                            <div class="content">
+                                @ViewData["Error"]
+                            </div>
+                        </div>
+                    }
+                    @if (ViewData["Success"] != null)
+                    {
+                        <div class="notification is-success">
+                            <button class="delete"></button>
+                            <div class="content">
+                                @ViewData["Success"]
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+            <footer class="hero-foot has-background-white-ter">
+                <div class="section is-flex is-justify-content-space-between">
+                    <span>
+                        2024
+                    </span>
+                    <span>
+                        © IT Student
+                    </span>
+                </div>
+            </footer>
+        </main>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/ajax.js" asp-append-version="true"></script>
+<script src="~/lib/bulma-toast/dist/bulma-toast.min.js" asp-append-version="true"></script>
+<script>
+    const successMessage = "@ViewData["Success"]";
+    console.log(successMessage);
+    if (successMessage) {
+        bulmaToast.toast({ 
+            message: successMessage, 
+            dismissible: true, 
+            type: 'is-success has-text-white',
+            animate: { 
+                in: 'fadeIn', 
+                out: 'fadeOut' }
+            });
+    }
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
