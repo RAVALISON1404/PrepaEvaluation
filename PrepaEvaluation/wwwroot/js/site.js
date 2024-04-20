@@ -30,7 +30,7 @@ document.addEventListener('click', (e) => {
     });
 });
 
-// désactiver les skeletons
+// Désactiver les skeletons et la pageLoader
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.has-skeleton').forEach((skeleton) => {
         skeleton.classList.remove('has-skeleton');
@@ -44,13 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.skeleton-lines').forEach((skeleton) => {
         skeleton.classList.remove('skeleton-lines');
     });
+    document.querySelector('.pageloader').classList.remove('is-active');
 });
 
 // TODO la facon pour stocker la valeur du switch du dark mode
 const switchMode = document.querySelector('#switch-mode');
 switchMode.addEventListener('change', () => {
-    // document.documentElement.setAttribute('data-theme', 'dark');
-    if (this.checked) document.documentElement.setAttribute('data-theme', 'dark');
+    if (localStorage.getItem('theme') === null) localStorage.setItem(document.documentElement.getAttribute('data-theme'));
+    const newTheme = localStorage.getItem('theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
 });
 
 function deleteItem (link) {
@@ -69,8 +72,7 @@ function deleteItem (link) {
 async function getById(link) {
     const itemId = link.getAttribute('data-id');
     const url = link.getAttribute('data-url');
-    const response = await Ajax('GET', url + itemId);
-    return JSON.parse(response);
+    return await Ajax('GET', url + itemId);
 }
 
 async function updateItem(link) {
@@ -91,7 +93,7 @@ async function updateItem(link) {
 
 async function searchItem(link) {
     const url = link.getAttribute('data-url');
-    const data = { "search": link.value};
+    const data = { "search": link.value };
     const response = await Ajax('POST', url, data);
     console.log(response);
 }

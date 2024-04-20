@@ -1,0 +1,343 @@
+@{
+    ViewData["Title"] = "Sceance Page";
+}
+<div class="box">
+<div class="is-flex is-justify-content-space-between">
+    <a asp-controller="Sceance" asp-action="Index">
+        <h3 class="subtitle has-skeleton has-text-weight-bold">
+            Séance
+        </h3>
+    </a>
+    <form asp-controller="Sceance" asp-action="Search" method="post">
+        <div class="field has-addons has-addons-centered">
+            <div class="control has-icons-right">
+                <input type="text" name="search" class="input" placeholder="Rechercher...">
+                <span class="icon is-right is-clickable is-ghost reset">
+                    <i class="fas fa-delete-left"></i>
+                </span>
+            </div>
+            <div class="control">
+                <button type="submit" class="button is-link">
+                     <span class="icon">
+                         <i class="fas fa-magnifying-glass"></i>
+                     </span>
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="field is-grouped">
+        <form method="post" asp-controller="Sceance" asp-action="ImportFile" enctype="multipart/form-data">
+            <div class="field has-addons">
+                <div class="control">
+                    <div class="file">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="file"/>
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-file-import"></i>
+                                </span>
+                                <span class="file-label">
+                                    Importer
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="field">
+            <div class="control">
+                <div class="dropdown is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button">
+                            <span class="icon">
+                                <i class="fas fa-solid fa-filter"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <a class="dropdown-item">
+                                Item 1
+                            </a>
+                            <a class="dropdown-item">
+                                Item 2
+                            </a>
+                            <a class="dropdown-item">
+                                Item 3
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <div class="dropdown is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button is-ghost">
+                            <span class="icon">
+                                <i class="fas fa-ellipsis-vertical"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <a asp-controller="Sceance" asp-action="GeneratePdf" class="dropdown-item">
+                                Exporter en pdf
+                            </a>
+                            <a asp-controller="Sceance" asp-action="GenerateExcel" class="dropdown-item">
+                                Exporter en excel
+                            </a>
+                            <a asp-controller="Sceance" asp-action="GenerateCsv" class="dropdown-item">
+                                Exporter en CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table-container">
+    <table class="table is-fullwidth">
+        <thead>
+            <tr>
+                <th>
+                    <span class="icon is-clickable add">
+                        <i class="fas fa-add"></i>
+                    </span>
+                </th>
+                <th>
+                    Film
+                </th>
+                <th>
+                    Catégorie
+                </th>
+                <th>
+                    Salle
+                </th>
+                <th class="has-text-centered">
+                    Date
+                </th>
+                <th class="has-text-centered">
+                    Heure
+                </th>
+                <th>
+                    
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        @for (var i = 0; i < @Model["sceances"].Count; i++)
+        {
+            <tr>
+                <td>
+                    @Model["sceances"][i].Id
+                </td>
+                <td>
+                    @Model["sceances"][i].Film
+                </td>
+                <td>
+                    @Model["sceances"][i].Categorie
+                </td>
+                <td>
+                    @Model["sceances"][i].Salle
+                </td>
+                <td class="has-text-centered">
+                    @Model["sceances"][i].Date
+                </td>
+                <td class="has-text-centered">
+                    @Model["sceances"][i].Heure
+                </td>
+                <td>
+                    <div class="buttons is-pulled-right">
+                        <a class="button is-dark is-background-grey has-text-white">
+                            <span class="icon">
+                                <i class="fa-solid fa-pen"></i>
+                            </span>
+                        </a>
+                        <a class="button is-danger is-background-danger-40 has-text-white" asp-controller="Sceance" asp-action="Delete" asp-route-id="@Model["sceances"][i].Id">
+                            <span class="icon">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+@if (@Model["sceances"].Count == 0)
+{
+    <h3 class="title has-text-centered">
+        Aucune donnée n'est affichée pour le moment.
+    </h3>
+}
+else
+{
+    <nav class="pagination">
+        @if (Model["sceances"].IsFirstPage)
+        {
+            <a class="pagination-previous is-disabled">
+                Précédent
+            </a>
+        }
+        @if (Model["sceances"].IsLastPage)
+        {
+            <a class="pagination-next is-disabled">
+                Suivant
+            </a>
+        }
+        @if (Model["sceances"].HasPreviousPage)
+        {
+            <a asp-controller="Sceance" asp-action="Index" asp-route-page="@(Model["currentPage"] - 1)" class="pagination-previous">
+                Précédent
+            </a>
+        }
+        @if (Model["sceances"].HasNextPage)
+        {
+            <a asp-controller="Sceance" asp-action="Index" asp-route-page="@(Model["currentPage"] + 1)" class="pagination-next">
+                Suivant
+            </a>
+        }
+        <ul class="pagination-list is-hidden-mobile">
+            @for (var i = 1; i <= @Model["totalPages"]; i++)
+            {
+                @if (i == @Model["currentPage"])
+                {
+                    <li>
+                        <a asp-controller="Sceance" asp-action="Index" asp-route-page="@Model["currentPage"]" class="pagination-link is-current">
+                            @Model["currentPage"]
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+
+                        @{
+                            var index = i;
+                        }
+                        <a asp-controller="Sceance" asp-action="Index" asp-route-page="@index" class="pagination-link">
+                            @index
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+}
+</div>
+@* Add modal *@
+<div class="modal add-modal is-clipped">
+    <div class="modal-background"></div>
+    <form method="post" asp-controller="Sceance" asp-action="Add" class="modal-content content box">
+        <header class="is-flex is-justify-content-space-between">
+            <h3>
+                Ajout de Stock
+            </h3>
+            <a asp-controller="Sceance" asp-action="Index" asp-route-page="@Model["currentPage"]" class="delete close-add-modal"></a>
+        </header>
+        <section>
+        <div class="form-group">
+            <span class="text-danger"></span>
+        </div>
+            <div class="field">
+                <label class="label">Désignation</label>
+                <div class="control">
+                    <input class="input" type="text" asp-va name="designation">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Unité</label>
+                <div class="control">
+                    <input class="input" type="text" name="unity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Quantité</label>
+                <div class="control">
+                    <input class="input" type="text" name="quantity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Identification</label>
+                <div class="control">
+                    <input class="input" type="text" name="identification">
+                </div>
+            </div>
+            <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        Ajouter
+                    </button>
+                </div>
+                <div class="control">
+                    <a asp-controller="Sceance" asp-action="Index" asp-route-page="@Model["currentPage"]" class="button is-light">
+                        Annuler
+                    </a>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>
+@* Update modal *@
+<div class="modal update-modal is-clipped">
+    <div class="modal-background"></div>
+    <form method="post" asp-controller="Home" asp-action="Update" class="modal-content content box">
+        <header class="is-flex is-justify-content-space-between">
+            <h3>
+                Modification de Stock
+            </h3>
+            <a asp-controller="Sceance" asp-action="Index" asp-route-page="@Model["currentPage"]" class="delete close-add-modal"></a>
+        </header>
+        <section>
+            <input type="hidden" name="id">
+            <div class="field">
+                <label class="label">Désignation</label>
+                <div class="control">
+                    <input class="input" type="text" name="designation">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Unité</label>
+                <div class="control">
+                    <input class="input" type="text" name="unity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Quantité</label>
+                <div class="control">
+                    <input class="input" type="text" name="quantity">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Identification</label>
+                <div class="control">
+                    <input class="input" type="text" name="identification">
+                </div>
+            </div>
+            <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        Modifier
+                    </button>
+                </div>
+                <div class="control">
+                    <a asp-controller="Sceance" asp-action="Index" asp-route-page="@Model["currentPage"]" class="button is-light">
+                        Annuler
+                    </a>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>

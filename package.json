@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "bulma-dashboard": "^0.3.2"
+  }
+}

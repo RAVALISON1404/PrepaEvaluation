@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using PagedList;
 using PrepaEvaluation.Models;
@@ -10,6 +11,7 @@ namespace PrepaEvaluation.Controllers;
 public class HomeController : BaseController
 {
     public HomeController (Connection connection) : base(connection) { }
+    [SuppressMessage("ReSharper.DPA", "DPA0010: ASP issues")]
     public IActionResult Index(int page = 1)
     {
         var totalStocksCount = Connection.stock.Count();
@@ -27,12 +29,14 @@ public class HomeController : BaseController
         return View(dictionnary);
     }
     [HttpGet]
+    [SuppressMessage("ReSharper.DPA", "DPA0010: ASP issues")]
     public IActionResult GetById(int id)
     {
         var stock = Connection.stock.Find(id);
         return Json(stock);
     }
     [HttpPost]
+    [SuppressMessage("ReSharper.DPA", "DPA0010: ASP issues")]
     public IActionResult Add(string designation, string unity, double quantity, string? identification)
     {
         var stock = new Stock()
@@ -50,12 +54,12 @@ public class HomeController : BaseController
                 Connection.stock.Add(stock);
                 Connection.SaveChanges();
                 transaction.Commit();
-                ViewBag.Message = "Insertion réussie";
+                TempData["Success"] = "Insertion réussie";
             }
             catch (Exception e)
             {
                 transaction.Rollback();
-                ViewBag.Message = $"Une erreur s'est produite lors de l'insertion d'un nouveau item : {e.Message}";
+                TempData["Error"] = $"Une erreur s'est produite lors de l'insertion d'un nouveau item : {e.Message}";
             }
         }
         return RedirectToAction("Index");
@@ -65,7 +69,7 @@ public class HomeController : BaseController
     {
         if (file == null || file.Length == 0)
         {
-            ViewBag.Message = "Veuillez sélectionner un fichier à importer.";
+            TempData["Error"] = "Veuillez sélectionner un fichier à importer.";
             return RedirectToAction("Index");
         }
         var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
@@ -85,12 +89,12 @@ public class HomeController : BaseController
                 Connection.SaveChanges();
                 transaction.Commit();
                 System.IO.File.Delete(filePath);
-                ViewBag.Message = "Importation réussie";
+                TempData["Success"] = "Importation réussie";
             }
             catch (Exception e)
             {
                 transaction.Rollback();
-                ViewBag.Message = $"Une erreur s'est produite lors de l'importation du fichier : {e.Message}";
+                TempData["Error"] = $"Une erreur s'est produite lors de l'importation du fichier : {e.Message}";
                 return RedirectToAction("Index");
             }   
         }
@@ -107,15 +111,15 @@ public class HomeController : BaseController
                 if (stock != null) Connection.stock.Remove(stock);
                 Connection.SaveChanges();
                 transaction.Commit();
-                ViewBag.Message = "Suppression réussie";
+                TempData["Success"] = "Suppression réussie";
             }
             catch (Exception e)
             {
                 transaction.Rollback();
-                ViewBag.Message = $"Une erreur s'est produite lors de l'importation du fichier : {e.Message}";
+                TempData["Error"] = $"Une erreur s'est produite lors de la suppresion de l'élement : {e.Message}";
             }
         }
-        return Ok();
+        return Json(TempData);
     }
     [HttpPost]
     public IActionResult Update(int id, string designation, string unity, double quantity, string? identification)
@@ -133,11 +137,11 @@ public class HomeController : BaseController
                 oldStock.Identification = identification;
                 Connection.SaveChanges();
                 transaction.Commit();
-                ViewBag.Message = "Modification réussie";
+                TempData["Success"] = "Modification réussie";
             }
             catch (Exception e)
             {
-                ViewBag.Message = "Une erreur s'est produite lors de la mise à jour de l'article : " + e.Message;
+                TempData["Error"] = $"Une erreur s'est produite lors de la mise à jour de l'article: {e.Message}";
                 transaction.Rollback();
             }
         }
@@ -151,23 +155,37 @@ public class HomeController : BaseController
 
     public IActionResult GenerateExcel()
     {
-        var stocks = Connection.stock.ToList();
-        FileManager.ExportToExcel(stocks, "stocks.xlsx");
+        try
+        {
+            var stocks = Connection.stock.ToList();
+            FileManager.ExportToExcel(stocks, "stocks.xlsx");
+            TempData["Success"] = "Exportation réussie";
+        }
+        catch (Exception e)
+        {
+            TempData["Error"] = $"Une erreur s'est produite lors de l'exportation du fichier : {e.Message}";
+        }
         return RedirectToAction("Index");
     }
 
     public IActionResult GenerateCsv()
     {
-        var stocks = Connection.stock.ToList();
-        FileManager.ExportToCsv(stocks, "stocks.csv");
+        try
+        {
+            var stocks = Connection.stock.ToList();
+            FileManager.ExportToCsv(stocks, "stocks.csv");
+            TempData["Success"] = "Exportation réussie";
+        }
+        catch (Exception e)
+        {
+            TempData["Error"] = $"Une erreur s'est produite lors de l'exportation du fichier : {e.Message}";
+        }
         return RedirectToAction("Index");
     }
 
     [HttpPost]
     public IActionResult Search(string search, int page = 1)
     {
-        Console.WriteLine(search + " eto");
-        search = "Miroir";
         var totalStocksCount = Connection.stock.Count(s => s.Designation == search);
         var totalPages = (int)Math.Ceiling((double)totalStocksCount / PageSize);
         var stocks = Connection.stock

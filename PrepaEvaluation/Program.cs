@@ -29,12 +29,36 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-// TODO Generation de PDF
+// TODO Génération de PDF
 app.UseRotativa();
 
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// TODO création des tables temporaires utilisées dans les imports de fichiers
+app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStarted.Register(() =>
+{
+    using var scope = app.Services.CreateScope();
+    var serviceProvider = scope.ServiceProvider;
+    var connection = serviceProvider.GetRequiredService<Connection>();
+    connection.Database.OpenConnection();
+    using var command = connection.Database.GetDbConnection().CreateCommand();
+    command.CommandText = "CREATE TABLE sceancetemp (id SERIAL PRIMARY KEY, film VARCHAR(255) NOT NULL, categorie VARCHAR(255) NOT NULL, salle VARCHAR(255) NOT NULL, date DATE NOT NULL, heure TIME NOT NULL);";
+    command.ExecuteNonQuery();
+});
+
+// TODO suppression des tables temporaires utilisées dans les imports de fichiers
+app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopped.Register(() =>
+{
+    using var scope = app.Services.CreateScope();
+    var serviceProvider = scope.ServiceProvider;
+    var connection = serviceProvider.GetRequiredService<Connection>();
+    connection.Database.OpenConnection();
+    using var command = connection.Database.GetDbConnection().CreateCommand();
+    command.CommandText = "DROP TABLE sceancetemp";
+    command.ExecuteNonQuery();
+});
 
 app.Run();
